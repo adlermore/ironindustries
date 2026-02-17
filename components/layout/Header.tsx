@@ -8,12 +8,18 @@ import api from '@/utils/api';
 import { JsonContext } from '@/context/JsonContext';
 import logo from '@/public/images/logo.png'
 import Image from 'next/image';
+import armFlag from '@/public/images/flags/armFlag.webp';
+import ruFlag from '@/public/images/flags/ruFlag.webp';
+import enFlag from '@/public/images/flags/enFlag.webp';
+import IconLocation from '../Icons/IconLocation';
 
 function Header() {
   const [isOpen, setOpen] = useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { contacts, setContacts } = useContext(JsonContext);
   const langDropdownRef = useRef<HTMLDivElement>(null);
+  const headerTopRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
   const router = useRouter();
@@ -30,9 +36,9 @@ function Header() {
 
   // Language options
   const languages = [
-    { code: 'en', label: 'EN', fullName: 'English' },
-    { code: 'ru', label: 'RU', fullName: 'Русский' },
-    { code: 'hy', label: 'HY', fullName: 'Հայերեն' },
+    { code: 'en', label: 'EN', fullName: 'English', flag: enFlag },
+    { code: 'ru', label: 'RU', fullName: 'Русский', flag: ruFlag },
+    { code: 'hy', label: 'HY', fullName: 'Հայերեն', flag: armFlag },
   ];
 
   const currentLanguage = languages.find(lang => lang.code === currentLocale) || languages[0];
@@ -53,6 +59,21 @@ function Header() {
     }
     return pathWithoutLocale.startsWith(href);
   };
+
+  // Handle scroll event
+  useEffect(() => {
+    const handleScroll = () => {
+      const headerTopHeight = headerTopRef.current?.offsetHeight || 40;
+      if (window.scrollY > headerTopHeight) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -96,47 +117,151 @@ function Header() {
 
   return (
     <header className='header'>
-      <div className='custom_container'>
-        <div className='header_inner'>
-          {/* Logo */}
-          <div className='header_logo'>
-            <Link href='/' className='z-20'>
-              <Image src={logo} alt='IRon Industries' width={150} height={50} priority />
+      {/* Top Header - Not Sticky */}
+      <div className='header_top' ref={headerTopRef}>
+        <div className='custom_container'>
+          <div className='flex items-center gap-5'>
+            <Link href='/'>
+              <IconLocation />
             </Link>
+            <span>Working Hours 10:00-18:00</span>
           </div>
+          <Link href="tel:+1234567890">+374 00 00 00 00</Link>
+        </div>
+      </div>
 
-          {/* Desktop Menu */}
-          <nav className='desktop_menu'>
-            <ul className='nav_list'>
-              {navItems.map((item) => (
-                <li key={item.href} className='nav_item'>
-                  <Link 
-                    href={item.href} 
-                    className={`nav_link ${isActiveLink(item.href) ? 'active' : ''}`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+      {/* Bottom Header - Sticky with Glassmorphism Effect */}
+      <div className={`header_bottom ${isScrolled ? 'scrolled' : ''}`}>
+        <div className='custom_container'>
+          <div className='header_inner'>
+            {/* Logo */}
+            <div className='header_logo'>
+              <Link href='/' className='z-20'>
+                <Image src={logo} alt='IRon Industries' width={150} height={50} priority />
+              </Link>
+            </div>
 
-          {/* Language Dropdown - Desktop */}
-          <div className='language_dropdown desktop_lang' ref={langDropdownRef}>
-            <button 
+            {/* Desktop Menu */}
+            <nav className='desktop_menu'>
+              <ul className='nav_list'>
+                {navItems.map((item) => (
+                  <li key={item.href} className='nav_item'>
+                    <Link
+                      href={item.href}
+                      className={`nav_link ${isActiveLink(item.href) ? 'active' : ''}`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            {/* Language Dropdown - Desktop */}
+            <div className='language_dropdown desktop_lang' ref={langDropdownRef}>
+              <button
+                className='lang_dropdown_btn'
+                onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+              >
+                <span className='lang_flag'>
+                  <Image
+                    src={currentLanguage.flag}
+                    alt={currentLanguage.label}
+                    width={20}
+                    height={15}
+                  />
+                </span>
+                <span className='lang_current'>{currentLanguage.label}</span>
+                <svg
+                  className={`lang_arrow ${isLangDropdownOpen ? 'open' : ''}`}
+                  width="12"
+                  height="8"
+                  viewBox="0 0 12 8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+
+              {isLangDropdownOpen && (
+                <div className='lang_dropdown_menu'>
+                  {languages
+                    .filter(lang => lang.code !== currentLocale)
+                    .map((lang) => (
+                      <button
+                        key={lang.code}
+                        onClick={() => switchLocale(lang.code)}
+                        className='lang_dropdown_item flex items-center gap-2'
+                      >
+                        <Image
+                          src={lang.flag}
+                          alt={lang.label}
+                          width={20}
+                          height={15}
+                        />
+                        {lang.label}
+                      </button>
+                    ))}
+                </div>
+              )}
+            </div>
+
+            {/* Hamburger Menu - Mobile/Tablet */}
+            <div className="hamburger_block">
+              <Hamburger
+                toggled={isOpen}
+                toggle={setOpen}
+                size={22}
+                direction='right'
+                color="#fff"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      <div className={`mobile_menu ${isOpen ? 'open' : ''}`}>
+        <nav className='mobile_nav'>
+          <ul className='mobile_nav_list'>
+            {navItems.map((item) => (
+              <li key={item.href} className='mobile_nav_item'>
+                <Link
+                  href={item.href}
+                  className={`mobile_nav_link ${isActiveLink(item.href) ? 'active' : ''}`}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {/* Language Dropdown - Mobile */}
+          <div className='language_dropdown mobile_lang'>
+            <button
               className='lang_dropdown_btn'
               onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
             >
+              <span className='lang_flag'>
+                <Image
+                  src={currentLanguage.flag}
+                  alt={currentLanguage.label}
+                  width={20}
+                  height={15}
+                />
+              </span>
               <span className='lang_current'>{currentLanguage.label}</span>
-              <svg 
+
+              <svg
                 className={`lang_arrow ${isLangDropdownOpen ? 'open' : ''}`}
-                width="12" 
-                height="8" 
-                viewBox="0 0 12 8" 
-                fill="none" 
+                width="12"
+                height="8"
+                viewBox="0 0 12 8"
+                fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
 
@@ -156,72 +281,7 @@ function Header() {
               </div>
             )}
           </div>
-
-          {/* Hamburger Menu - Mobile/Tablet */}
-          <div className="hamburger_block">
-            <Hamburger
-              toggled={isOpen}
-              toggle={setOpen}
-              size={22}
-              direction='right'
-              color="#fff"
-            />
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        <div className={`mobile_menu ${isOpen ? 'open' : ''}`}>
-          <nav className='mobile_nav'>
-            <ul className='mobile_nav_list'>
-              {navItems.map((item) => (
-                <li key={item.href} className='mobile_nav_item'>
-                  <Link 
-                    href={item.href} 
-                    className={`mobile_nav_link ${isActiveLink(item.href) ? 'active' : ''}`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            {/* Language Dropdown - Mobile */}
-            <div className='language_dropdown mobile_lang'>
-              <button 
-                className='lang_dropdown_btn'
-                onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              >
-                <span className='lang_current'>{currentLanguage.label}</span>
-                <svg 
-                  className={`lang_arrow ${isLangDropdownOpen ? 'open' : ''}`}
-                  width="12" 
-                  height="8" 
-                  viewBox="0 0 12 8" 
-                  fill="none" 
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-
-              {isLangDropdownOpen && (
-                <div className='lang_dropdown_menu'>
-                  {languages
-                    .filter(lang => lang.code !== currentLocale)
-                    .map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => switchLocale(lang.code)}
-                        className='lang_dropdown_item'
-                      >
-                        {lang.label}
-                      </button>
-                    ))}
-                </div>
-              )}
-            </div>
-          </nav>
-        </div>
+        </nav>
       </div>
 
       {/* Overlay */}

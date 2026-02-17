@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div className="overflow-x-hidden text-white">
       <MainBanner />
-      <div className="custom_container pt-100 h-[100vh]">
+      <div className="custom_container pt-100 h-screen">
         <h1>{t('title')}</h1>
         <p>{t('description')}</p>
       </div>

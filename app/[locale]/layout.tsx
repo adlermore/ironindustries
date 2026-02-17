@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Toaster } from "react-hot-toast";
 
-import "@/app/globals.scss";
+import "@/app/globals.css";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 import Header from "@/components/layout/Header";
@@ -103,7 +103,7 @@ export default async function LocaleLayout({
           <NextIntlClientProvider>
             <Toaster position="bottom-right" containerStyle={{ zIndex: 9999 }} />
             <Header />
-            <main className="flex-1 main-wrapper mt-[-82px]">
+            <main className="flex-1 main-wrapper -mt-20.5">
               {children}
             </main>
             <Footer />
