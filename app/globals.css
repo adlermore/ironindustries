@@ -21,15 +21,15 @@ body {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  background: #000;
+  font-family: var(--font-montserrat);
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+  background-attachment: fixed;
+  color: #ffffff;
+  overflow-x: hidden;
 }
 
 .main_wrapper {
   flex: 1;
-}
-
-body {
-  font-family: var(--font-montserrat);
 }
 
 .custom_container {
@@ -100,6 +100,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+
   &:hover {
     background-color: rgba(219, 219, 219, 0.1);
   }
@@ -107,13 +108,23 @@ body {
 
 
 @keyframes lineX {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
 }
 
 @keyframes lineY {
-  from { transform: scaleY(0); }
-  to { transform: scaleY(1); }
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
 }
 
 
@@ -128,22 +139,56 @@ body {
   will-change: transform;
 }
 
-.delay-1 { animation-delay: .1s; }
-.delay-2 { animation-delay: .3s; }
-.delay-3 { animation-delay: .5s; }
-.delay-4 { animation-delay: .7s; }
-.delay-5 { animation-delay: .9s; }
+.delay-1 {
+  animation-delay: .1s;
+}
+
+.delay-2 {
+  animation-delay: .3s;
+}
+
+.delay-3 {
+  animation-delay: .5s;
+}
+
+.delay-4 {
+  animation-delay: .7s;
+}
+
+.delay-5 {
+  animation-delay: .9s;
+}
 
 @keyframes traceMoveX {
-  0% { left: -20px; opacity: 0; }
-  10% { opacity: 1; }
-  100% { left: 100%; opacity: 0; }
+  0% {
+    left: -20px;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
 }
 
 @keyframes traceMoveY {
-  0% { top: -20px; opacity: 0; }
-  10% { opacity: 1; }
-  100% { top: 100%; opacity: 0; }
+  0% {
+    top: -20px;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
 }
 
 .trace-x {
@@ -153,7 +198,7 @@ body {
   height: 4px;
   border-radius: 50%;
   background: white;
-  box-shadow: 
+  box-shadow:
     0 0 4px rgba(255, 255, 255, 0.8),
     0 0 10px rgba(255, 255, 255, 0.6),
     0 0 20px rgba(255, 255, 255, 0.4),
@@ -168,10 +213,47 @@ body {
   height: 4px;
   border-radius: 50%;
   background: white;
-  box-shadow: 
+  box-shadow:
     0 0 4px rgba(255, 255, 255, 0.7),
     0 0 12px rgba(255, 255, 255, 0.5),
     0 0 24px rgba(255, 255, 255, 0.3),
     0 0 36px rgba(255, 255, 255, 0.15);
   animation: traceMoveY 6s linear infinite;
+}
+
+
+.section_title {
+  font-size: 34px;
+  font-weight: bold;
+  color: #fff;
+  padding-left: 17px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: 20px;
+  &:before {
+    content: "";
+    width: 3px;
+    background-color: #FE2B00;
+    height: 42px;
+    left: 0;
+    position: absolute;
+  }
+}
+
+
+.border_decor {
+  position: relative;
+  padding: 3px;
+  background: #FE2B00;
+  border: 3px solid #FE2B00;
+  clip-path: polygon(100% 0, 100% 85%, 85% 100%, 0 100%, 0 0);
+}
+
+.border_decor>* {
+  background: #fff;
+  height: 100%;
+  width: 100%;
+  clip-path: polygon(100% 0, 100% 85%, 85% 100%, 0 100%, 0 0);
 }
